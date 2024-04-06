@@ -1,10 +1,51 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import configuration from './config/configuration';
+import { RouteMiddleware } from './middlewares/route.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TypeOrmConfigService } from './config/TyprOrmConfigService';
+import { RouteInterceptor } from './interceptors/route.interceptor';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { HttpExceptionFilter } from './filters/http-exception.filter';
 
-@Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+// Define multiple env file, FIFO
+const ENV_FILE_PATH: string[] = ['.env.dev.local', '.env.local', '.env']
+// Config module, reading .env file
+const CONFIG_MODEL = ConfigModule.forRoot({
+  envFilePath: ENV_FILE_PATH,
+  cache: true,
+  isGlobal: true,
+  load: [configuration]
 })
-export class AppModule {}
+// Database module
+const TYPE_ORM_MODULE = TypeOrmModule.forRootAsync({
+  useClass: TypeOrmConfigService,
+})
+// Interceptor
+const ROUTE_INTERCEPTOR = {
+  provide: APP_INTERCEPTOR,
+  useClass: RouteInterceptor,
+}
+// Filter
+const HTTP_EXCEPTION_FILTER = {
+  provide: APP_FILTER,
+  useClass: HttpExceptionFilter
+}
+
+// Module settings
+@Module({
+  imports: [CONFIG_MODEL, TYPE_ORM_MODULE],
+  controllers: [AppController],
+  providers: [AppService, ROUTE_INTERCEPTOR, HTTP_EXCEPTION_FILTER],
+})
+
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // Config middlewares
+    consumer
+      .apply(RouteMiddleware)
+      .forRoutes('*')
+  }
+}
