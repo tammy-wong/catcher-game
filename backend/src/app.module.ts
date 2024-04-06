@@ -9,6 +9,7 @@ import { TypeOrmConfigService } from './config/TyprOrmConfigService';
 import { RouteInterceptor } from './interceptors/route.interceptor';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
+import { CatcherGameModule } from './catchergame/catchergame.module';
 
 // Define multiple env file, FIFO
 const ENV_FILE_PATH: string[] = ['.env.dev.local', '.env.local', '.env']
@@ -36,7 +37,7 @@ const HTTP_EXCEPTION_FILTER = {
 
 // Module settings
 @Module({
-  imports: [CONFIG_MODEL, TYPE_ORM_MODULE],
+  imports: [CONFIG_MODEL, TYPE_ORM_MODULE, CatcherGameModule],
   controllers: [AppController],
   providers: [AppService, ROUTE_INTERCEPTOR, HTTP_EXCEPTION_FILTER],
 })
