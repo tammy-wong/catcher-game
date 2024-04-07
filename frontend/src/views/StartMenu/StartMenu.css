@@ -1,6 +1,7 @@
 .start-menu {
     background-image: url('../../assets/images/background/bg2.png');
     background-size: cover;
+    background-position: center;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,47 +12,9 @@
 }
 
 .start-menu-title {
-    font-size: 4rem;
+    font-size: 5rem;
     font-weight: bold;
     color: white;
     margin-bottom: 20px;
     text-align: center;
-}
-
-.start-menu-button {
-    background-color: #ffffff;
-    color: #000000;
-    font-size: 2rem;
-    font-weight: bold;
-    padding: 10px 20px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    text-decoration: none;
-}
-
-.start-menu-button:hover {
-    background-color: #e0e0e0;
-    cursor: pointer;
-}
-
-@media (max-width: 768px) {
-    .start-menu-title {
-        font-size: 3rem;
-    }
-
-    .start-menu-button {
-        font-size: 1.5rem;
-        padding: 8px 16px;
-    }
-}
-
-@media (max-width: 480px) {
-    .start-menu-title {
-        font-size: 2rem;
-    }
-
-    .start-menu-button {
-        font-size: 1.2rem;
-        padding: 6px 12px;
-    }
 }

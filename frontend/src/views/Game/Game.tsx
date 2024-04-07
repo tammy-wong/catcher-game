@@ -1,114 +1,245 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import './Game.css'; // Make sure to create a Game.css file for styling
+import './Game.css';
+import API from '../../api';
+import image_p1 from '../../assets/images/add/p1.png'
+import image_p2 from '../../assets/images/add/p2.png'
+import image_p3 from '../../assets/images/add/p3.png'
+import image_p4 from '../../assets/images/add/p4.png'
+import image_e1 from '../../assets/images/minus/e1.png'
+import image_e2 from '../../assets/images/minus/e2.png'
+import image_boat from '../../assets/images/boat.png'
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import { blue } from '@mui/material/colors';
+import { relative } from 'path';
 
+const GameDuration = 60000;
+const PlayerMovementAmount = 20;
+const PlayerWidth = 50;
+const PlayerHeight = 50; // Assuming a height for the player for collision detection
+const ItemWidth = 30; // Assuming a width for the items
+const ItemHeight = 30; // Assuming a height for the items
+const ItemMovementAmount = 5;
+
+// Define the types for your items
 type ItemType = 'p1' | 'p2' | 'p3' | 'p4' | 'e1' | 'e2';
 
 interface Item {
     type: ItemType;
-    position: {
-        x: number;
-        y: number;
-    };
+    id: number;
+    top: number;
+    left: number; // Horizontal position
 }
 
-const Game = () => {
-    const navigate = useNavigate();
-    const [score, setScore] = useState<number>(0);
-    const [playerPosition, setPlayerPosition] = useState<number>(50);
-    const [items, setItems] = useState<Item[]>([]);
-    const gameDuration = 60000; // 60 seconds
-    const itemTypes: ItemType[] = ['p1', 'p2', 'p3', 'p4', 'e1', 'e2'];
+interface Player {
+    left: number; // Horizontal position
+}
 
-    const movePlayer = useCallback((event: { key: string; }) => {
-        if (event.key === 'ArrowLeft') {
-            setPlayerPosition((prev) => Math.max(prev - 10, 0));
-        } else if (event.key === 'ArrowRight') {
-            setPlayerPosition((prev) => Math.min(prev + 10, 100 - 10)); // Adjusted to prevent the player from going off screen
+const Game: React.FC = () => {
+    const [hasStarted, setHasStarted] = useState(false);
+    const [timer, setTimer] = useState(GameDuration);
+    const [score, setScore] = useState(0);
+    const [items, setItems] = useState<Item[]>([]);
+    const [player, setPlayer] = useState<Player>({ left: window.innerWidth / 2 - PlayerWidth / 2 });
+    const [openDialog, setOpenDialog] = useState(true); // Dialog open state
+    const [playerName, setPlayerName] = useState(''); // Player name input state
+    const [showInput, setShowInput] = useState(false); // Show input field at the end of the game
+    const navigate = useNavigate();
+
+    let interval: NodeJS.Timeout;
+    let itemInterval: NodeJS.Timeout;
+
+    // Function to start the game
+    const startGame = () => {
+        setOpenDialog(false);
+        setHasStarted(true);
+        interval = setInterval(() => {
+            setTimer(prevTimer => {
+                if (prevTimer <= 1000) {
+                    clearInterval(interval);
+                    clearInterval(itemInterval);
+                    endGame();
+                    return 0;
+                }
+                return prevTimer - 1000;
+            });
+        }, 1000);
+
+        // Start dropping items
+        itemInterval = setInterval(() => {
+            const newItem: Item = {
+                type: Math.random() < 0.7 ? `p${Math.ceil(Math.random() * 4)}` as ItemType : `e${Math.ceil(Math.random() * 2)}` as ItemType,
+                id: Math.random(),
+                top: -30,
+                left: Math.random() * (window.innerWidth - 30), // Random horizontal position
+            };
+            setItems(prevItems => [...prevItems, newItem]);
+        }, 1000);
+    };
+
+    // Function to handle player movement
+    const movePlayer = (direction: 'left' | 'right') => {
+        setPlayer(prevPlayer => {
+            const newLeft = prevPlayer.left + (direction === 'left' ? -PlayerMovementAmount : PlayerMovementAmount);
+            return {
+                ...prevPlayer,
+                left: Math.max(0, Math.min(window.innerWidth - PlayerWidth, newLeft)),
+            };
+        });
+    };
+
+    const moveItems = () => {
+        setItems((prevItems) => {
+            // Filter out items that have collided or moved off screen
+            return prevItems
+                .map((item) => {
+                    // Move the item down
+                    return { ...item, top: item.top + ItemMovementAmount };
+                })
+                .filter((item) => {
+                    // Check for collision, keep the item if no collision and it's still on screen
+                    return !checkCollision(item) && item.top < window.innerHeight;
+                });
+        });
+    };
+
+    // Function to end the game
+    const endGame = () => {
+        setHasStarted(false);
+        setShowInput(true);
+    };
+
+    // Function to submit score
+    const submitScore = async () => {
+        try {
+            // await API.Game.end_game({ playerName, score })
+            navigate('/leaderboard')
+        } catch (error) {
+            console.error('Error submitting score:', error);
         }
+    };
+
+    const checkCollision = (item: any) => {
+        // Check if the item is at the same height as the player
+        if (item.top + ItemHeight >= window.innerHeight - PlayerHeight) {
+            // Check if the item is within the horizontal range of the player
+            if (item.left < player.left + PlayerWidth && item.left + ItemWidth > player.left) {
+                // Collision detected, update the score
+                if (item.type.startsWith('p')) {
+                    setScore((prevScore) => prevScore + 50);
+                } else {
+                    setScore((prevScore) => prevScore - 100);
+                }
+                return true;
+            }
+        }
+        return false;
+    };
+
+    useEffect(() => {
+        if (hasStarted) {
+            // Start an interval to move the items down the screen
+            const moveItemsInterval = setInterval(moveItems, 50);
+            return () => clearInterval(moveItemsInterval);
+        }
+    }, [hasStarted, player]);
+
+    useEffect(() => {
+        // When the component is unmounted, clear the intervals
+        return () => {
+            clearInterval(interval);
+            clearInterval(itemInterval);
+        };
     }, []);
 
-    useEffect(() => {
-        window.addEventListener('keydown', movePlayer);
-
-        return () => window.removeEventListener('keydown', movePlayer);
-    }, [movePlayer]);
-
-    useEffect(() => {
-        // Function to generate a random item at a random position
-        const generateItem = () => {
-            const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
-            const position = { x: Math.random() * 100, y: 0 }; // Random x position, start from y = 0
-            return { type, position };
-        };
-
-        // Start generating items
-        const itemGenerationInterval = setInterval(() => {
-            setItems((prevItems) => [...prevItems, generateItem()]);
-        }, 2000); // Adjust interval to control the rate of item generation
-
-        // Start the game timer
-        const timerId = setTimeout(() => {
-            clearInterval(itemGenerationInterval);
-            navigate('/leaderboard', { state: { score } });
-        }, gameDuration);
-
-        return () => {
-            clearInterval(itemGenerationInterval);
-            clearTimeout(timerId);
-        };
-    }, [navigate, score]);
-
-    // Function to check for catches and update the score
-    useEffect(() => {
-        const dropInterval = setInterval(() => {
-            setItems((prevItems: any) => {
-                return prevItems.map((item: any) => {
-                    // Move item down
-                    const newY = item.position.y + 5;
-                    let newScore = score;
-
-                    // Check if the item is at the catcher level
-                    if (newY >= 90) { // Assuming 90 is the y position of the catcher
-                        // Check if the item is within the horizontal range of the catcher
-                        if (item.position.x >= playerPosition && item.position.x <= playerPosition + 10) {
-                            // Update score based on item type
-                            if (item.type.startsWith('p')) {
-                                newScore += 50;
-                            } else if (item.type.startsWith('e')) {
-                                newScore -= 100;
-                            }
-                            setScore(newScore);
-                            return null; // Remove caught item
-                        }
-                    }
-
-                    // Return item with updated position if not caught, or null if caught/out of bounds
-                    return newY > 100 ? null : { ...item, position: { ...item.position, y: newY } };
-                }).filter(Boolean); // Remove nulls (caught or out of bounds items)
-            });
-        }, 100); // Adjust interval for drop speed
-
-        return () => clearInterval(dropInterval);
-    }, [score, playerPosition]);
-
-    // Render the game UI
     return (
         <div className="game-container">
-            <h1>Catch the items!</h1>
-            <p>Score: {score}</p>
-            <div className="player" style={{ left: `${playerPosition}%` }}>
-                {/* Player character image */}
-            </div>
-            {items.map((item, index) => (
-                <div
-                    key={index}
-                    className={`item ${item.type}`}
-                    style={{ left: `${item.position.x}%`, top: `${item.position.y}%` }}
-                >
-                    {/* Item image based on type */}
+            <Dialog maxWidth='md' fullWidth={true} open={openDialog} >
+                <DialogTitle fontSize={24}>How to Play</DialogTitle>
+                <DialogContent className='dialog-size'>
+                    <DialogContentText>
+                        {/* <div className='p'>
+                            1. Control the <img className='guideline-boat' src={image_boat} alt='Boat' />
+                            to move<ArrowLeftIcon sx={{ fontSize: '150px', position: 'relative', top: '68px'}}/>or<ArrowRightIcon  sx={{ fontSize: '150px', position: 'relative', top: '68px'}}/>
+                        </div> */}
+                        <p className='p'>1. Control the boat to move left or right<br/>
+                        <div className='guideline-image-container'>
+                            <ArrowLeftIcon sx={{ fontSize: '150px' }}/>
+                            <img className='guideline-boat' src={image_boat} alt='Boat' />
+                            <ArrowRightIcon  sx={{ fontSize: '150px' }}/>
+                        </div>
+                        </p>
+                        <p className='p'>2. Catch below items
+                            <span className='add'> + 50 points</span>
+                        </p>
+                        <div className='guideline-image-container'>
+                            <img className='guideline-image' src={image_p1} alt='Image 1' />
+                            <img className='guideline-image' src={image_p2} alt='Image 2' />
+                            <img className='guideline-image' src={image_p3} alt='Image 3' />
+                            <img className='guideline-image' src={image_p4} alt='Image 4' />
+                        </div>
+                        <br />
+                        <p className='p'>3. Catch below items
+                            <span className='minus'> - 100 points</span>
+                        </p>
+                        <div className='guideline-image-container'>
+                            <img className='guideline-image' src={image_e1} alt='Image 5' />
+                            <img className='guideline-image' src={image_e2} alt='Image 6' />
+                        </div>
+                        <p className='p'>4. You have 
+                            <span className='minus'> 60 seconds</span>. 
+                            Enjoy Your Game!
+                        </p>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={startGame}>Start Game</Button>
+                </DialogActions>
+            </Dialog>
+            <>
+                <div className="timer">Time: {timer / 1000}s</div>
+                <div className="score">Score: {score}</div>
+                <div className="controls">
+                    <IconButton>
+                        <ArrowLeftIcon sx={{ fontSize: '200px', color: 'black' }} onClick={() => movePlayer('left')} />
+                    </IconButton>
+                    <IconButton>
+                        <ArrowRightIcon sx={{ fontSize: '200px', color: 'black' }} onClick={() => movePlayer('right')} />
+                    </IconButton>
                 </div>
+            </>
+
+            <div className="player" style={{ left: `${player.left}px` }} />
+
+            {items.map((item) => (
+                <div key={item.id} className={`item ${item.type}`} style={{ top: `${item.top}px`, left: `${item.left}px` }} />
             ))}
+
+            {showInput && (
+                <Dialog open={showInput} onClose={() => setShowInput(false)}>
+                    <DialogTitle>Game Over</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>Your score: {score}</DialogContentText>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="name"
+                            label="Enter Your Name"
+                            type="text"
+                            fullWidth
+                            variant="standard"
+                            value={playerName}
+                            onChange={(e) => setPlayerName(e.target.value)}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        {/* <Button onClick={() => setShowInput(false)}>Cancel</Button> */}
+                        <Button onClick={submitScore}>Submit</Button>
+                    </DialogActions>
+                </Dialog>
+            )}
         </div>
     );
 };

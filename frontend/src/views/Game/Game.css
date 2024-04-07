@@ -1,12 +1,36 @@
 .game-container {
     background-image: url('../../assets/images/background/bg1.png');
     background-size: cover;
+    background-position: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
     overflow: hidden;
+}
+
+.dialog-size {
+    height: 600px;
+}
+
+.guideline-image {
+    width: 100px;
+    height: 100px;
+    border: 5px solid #FE366F;
+    padding: 5px;
+    margin-right: 3px;
+}
+
+.guideline-boat {
+    width: 100px;
+    height: 100px;
+    border: 5px solid #3d36fe;
+    /* padding: 5px; */
+    margin-bottom: 10px;
+    margin-right: 3px;
 }
 
 .player {
@@ -19,12 +43,30 @@
     background-repeat: no-repeat;
 }
 
+.controls {
+    position: absolute;
+    bottom: 0px;
+}
+
+.p {
+    font-size: larger;
+}
+
+.add {
+    color: green;
+}
+
+.minus {
+    color: red;
+}
+
 .item {
     position: absolute;
     width: 30px;
     height: 30px;
     background-size: contain;
     background-repeat: no-repeat;
+    transition: top 0.05s linear;
 }
 
 .item.p1 {
@@ -49,11 +91,4 @@
 
 .item.e2 {
     background-image: url('../../assets/images/minus/e2.png');
-}
-
-button {
-    padding: 10px 20px;
-    font-size: 1em;
-    margin: 20px 0;
-    cursor: pointer;
 }

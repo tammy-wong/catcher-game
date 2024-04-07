@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import StartMenu from './views/StartMenu/StartMenu';
 import Game from './views/Game/Game';
 import LeaderBoard from './views/LeaderBoard/LeaderBoard';
+import './App.css'
 
 const App: React.FC = () => {
   return (
