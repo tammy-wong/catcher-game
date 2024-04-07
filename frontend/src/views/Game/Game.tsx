@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, IconButton } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, IconButton, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import './Game.css';
 import API from '../../api';
 import image_p1 from '../../assets/images/add/p1.png'
@@ -12,8 +13,6 @@ import image_e2 from '../../assets/images/minus/e2.png'
 import image_boat from '../../assets/images/boat.png'
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import { blue } from '@mui/material/colors';
-import { relative } from 'path';
 
 const GameDuration = 60000;
 const PlayerMovementAmount = 20;
@@ -138,6 +137,9 @@ const Game: React.FC = () => {
         return false;
     };
 
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
     useEffect(() => {
         if (hasStarted) {
             // Start an interval to move the items down the screen
@@ -156,46 +158,47 @@ const Game: React.FC = () => {
 
     return (
         <div className="game-container">
-            <Dialog maxWidth='md' fullWidth={true} open={openDialog} >
-                <DialogTitle fontSize={24}>How to Play</DialogTitle>
+            <Dialog
+                maxWidth='md'
+                fullWidth={true}
+                fullScreen={fullScreen}
+                open={openDialog}
+            >
+                <DialogTitle fontSize={36}>How to Play</DialogTitle>
                 <DialogContent className='dialog-size'>
                     <DialogContentText>
-                        {/* <div className='p'>
-                            1. Control the <img className='guideline-boat' src={image_boat} alt='Boat' />
-                            to move<ArrowLeftIcon sx={{ fontSize: '150px', position: 'relative', top: '68px'}}/>or<ArrowRightIcon  sx={{ fontSize: '150px', position: 'relative', top: '68px'}}/>
-                        </div> */}
-                        <p className='p'>1. Control the boat to move left or right<br/>
-                        <div className='guideline-image-container'>
-                            <ArrowLeftIcon sx={{ fontSize: '150px' }}/>
-                            <img className='guideline-boat' src={image_boat} alt='Boat' />
-                            <ArrowRightIcon  sx={{ fontSize: '150px' }}/>
-                        </div>
+                        <p className='p'>1. Control the boat to move left or right
+                            <div className='guideline-image-container'>
+                                <ArrowLeftIcon sx={{ fontSize: '150px' }} />
+                                <img className='guideline-boat' src={image_boat} alt='Boat' />
+                                <ArrowRightIcon sx={{ fontSize: '150px' }} />
+                            </div>
                         </p>
                         <p className='p'>2. Catch below items
                             <span className='add'> + 50 points</span>
                         </p>
                         <div className='guideline-image-container'>
-                            <img className='guideline-image' src={image_p1} alt='Image 1' />
-                            <img className='guideline-image' src={image_p2} alt='Image 2' />
-                            <img className='guideline-image' src={image_p3} alt='Image 3' />
-                            <img className='guideline-image' src={image_p4} alt='Image 4' />
+                            <img className='guideline-image' src={image_p1} alt='Add 1' />
+                            <img className='guideline-image' src={image_p2} alt='Add 2' />
+                            <img className='guideline-image' src={image_p3} alt='Add 3' />
+                            <img className='guideline-image' src={image_p4} alt='Add 4' />
                         </div>
                         <br />
                         <p className='p'>3. Catch below items
                             <span className='minus'> - 100 points</span>
                         </p>
                         <div className='guideline-image-container'>
-                            <img className='guideline-image' src={image_e1} alt='Image 5' />
-                            <img className='guideline-image' src={image_e2} alt='Image 6' />
+                            <img className='guideline-image' src={image_e1} alt='Minus 5' />
+                            <img className='guideline-image' src={image_e2} alt='Minus 6' />
                         </div>
-                        <p className='p'>4. You have 
-                            <span className='minus'> 60 seconds</span>. 
+                        <p className='p'>4. You have
+                            <span className='minus'> 60 seconds</span>.
                             Enjoy Your Game!
                         </p>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={startGame}>Start Game</Button>
+                    <Button sx={{ fontSize: '30px', color: 'white', backgroundColor: '#FE366F' }} onClick={startGame}>Start Game</Button>
                 </DialogActions>
             </Dialog>
             <>
@@ -218,10 +221,14 @@ const Game: React.FC = () => {
             ))}
 
             {showInput && (
-                <Dialog open={showInput} onClose={() => setShowInput(false)}>
-                    <DialogTitle>Game Over</DialogTitle>
+                <Dialog
+                    maxWidth='md'
+                    fullScreen={fullScreen}
+                    open={showInput}
+                >
+                    <DialogTitle fontSize={24}>Game Over</DialogTitle>
                     <DialogContent>
-                        <DialogContentText>Your score: {score}</DialogContentText>
+                        <DialogContentText sx={{ fontSize: 'larger' }}>Your score: {score}</DialogContentText>
                         <TextField
                             autoFocus
                             margin="dense"
@@ -235,8 +242,7 @@ const Game: React.FC = () => {
                         />
                     </DialogContent>
                     <DialogActions>
-                        {/* <Button onClick={() => setShowInput(false)}>Cancel</Button> */}
-                        <Button onClick={submitScore}>Submit</Button>
+                        <Button sx={{ fontSize: '20px', color: 'white', backgroundColor: '#00A7D3' }} onClick={submitScore}>Submit</Button>
                     </DialogActions>
                 </Dialog>
             )}

@@ -1,0 +1,11 @@
+.leaderboard {
+    background-image: url('../../assets/images/background/bg2.png');
+    background-size: cover;
+    background-position: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
