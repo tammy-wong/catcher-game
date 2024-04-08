@@ -1,0 +1,153 @@
+.game-container {
+    background-image: url('../../assets/images/background/bg1.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.dialog-size {
+    height: 600px;
+}
+
+.guideline-image {
+    width: 100px;
+    height: 100px;
+    border: 5px solid transparent;
+    padding: 5px;
+    margin-right: 3px;
+}
+
+.guideline-boat {
+    width: 100px;
+    height: 100px;
+    border: 5px solid transparent;
+    /* padding: 5px; */
+    margin-bottom: 10px;
+    margin-right: 3px;
+}
+
+.player {
+    position: absolute;
+    bottom: 10px;
+    width: 50px;
+    height: 60px;
+    background-image: url('../../assets/images/boat.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.timer {
+    font-size: 50px;
+    color: black;
+    position: absolute;
+    top: 30px;
+}
+
+.score {
+    font-size: 50px;
+    color: black;
+    position: absolute;
+    top: 100px;
+}
+
+.controls {
+    position: absolute;
+    bottom: 0px;
+}
+
+.p {
+    font-size: larger;
+}
+
+.add {
+    color: green;
+}
+
+.minus {
+    color: red;
+}
+
+.item {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: top 0.05s linear;
+}
+
+.item.p1 {
+    background-image: url('../../assets/images/add/p1.png');
+}
+
+.item.p2 {
+    background-image: url('../../assets/images/add/p2.png');
+}
+
+.item.p3 {
+    background-image: url('../../assets/images/add/p3.png');
+}
+
+.item.p4 {
+    background-image: url('../../assets/images/add/p4.png');
+}
+
+.item.e1 {
+    background-image: url('../../assets/images/minus/e1.png');
+}
+
+.item.e2 {
+    background-image: url('../../assets/images/minus/e2.png');
+}
+
+@media (max-width: 768px) {
+    .dialog-size {
+        height: 400px;
+    }
+
+    .guideline-image,
+    .guideline-boat {
+        width: 70px;
+        height: 70px;
+    }
+
+    .player {
+        width: 35px;
+        height: 42px;
+    }
+
+    .timer,
+    .score {
+        font-size: 35px;
+    }
+}
+
+@media (max-width: 450px) {
+    .dialog-size {
+        height: 300px;
+    }
+
+    .guideline-image,
+    .guideline-boat {
+        width: 50px;
+        height: 50px;
+    }
+
+    .player {
+        width: 25px;
+        height: 30px;
+    }
+
+    .timer,
+    .score {
+        font-size: 25px;
+    }
+}
