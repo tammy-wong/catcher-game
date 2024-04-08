@@ -20,9 +20,6 @@ The requirement of each application is displayed in the following:
    1. The application will display the top 100 players in real time.
    2. Each rank shows the player’s score and name.
 
-## About
-The application is using ReactJS for frontend, NestJS for backend, MariaDB as database and TypeORM for object-relational mapping.
-
 ## Setup Guide
 1. Database setup
    1. Download [Docker Desktop](https://www.docker.com/products/docker-desktop/)
