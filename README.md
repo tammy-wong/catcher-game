@@ -2,7 +2,6 @@
 
 ## Contents
 - [Background](https://github.com/tammy-wong/catcher-game/new/master?filename=README.md#background)
-- [About](https://github.com/tammy-wong/catcher-game/new/master?filename=README.md#about)
 - [Setup Guide](https://github.com/tammy-wong/catcher-game/new/master?filename=README.md#setup-guide)
 
 ## Background
