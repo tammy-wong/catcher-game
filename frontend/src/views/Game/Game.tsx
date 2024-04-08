@@ -113,7 +113,7 @@ const Game: React.FC = () => {
     // Function to submit score
     const submitScore = async () => {
         try {
-            // await API.Game.end_game({ playerName, score })
+            await API.Game.end_game({ name: playerName, score: score })
             navigate('/leaderboard')
         } catch (error) {
             console.error('Error submitting score:', error);
@@ -138,7 +138,7 @@ const Game: React.FC = () => {
     };
 
     const theme = useTheme();
-    const matchesMediumScreen  = useMediaQuery(theme.breakpoints.down('md'));
+    const matchesMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
     const matchesSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const dialogButtonSx = {
@@ -175,7 +175,7 @@ const Game: React.FC = () => {
             <Dialog
                 maxWidth='md'
                 fullWidth={true}
-                fullScreen={matchesMediumScreen }
+                fullScreen={matchesMediumScreen}
                 open={openDialog}
             >
                 <DialogTitle fontSize={36}>How to Play</DialogTitle>
@@ -212,18 +212,20 @@ const Game: React.FC = () => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button sx={{ ...buttonSx, bgcolor: '#FE366F', color: 'white'}} onClick={startGame}>Start Game</Button>
+                    <Button sx={{ ...buttonSx, bgcolor: '#00A7D3', color: 'white' }} onClick={() => navigate('/')}>Menu</Button>
+                    <Button sx={{ ...buttonSx, bgcolor: '#FE366F', color: 'white' }} onClick={startGame}>Start Game</Button>
                 </DialogActions>
             </Dialog>
             <>
+                <Button sx={{ ...buttonSx, bgcolor: '#00A7D3', color: 'white', marginRight: 'auto', marginBottom: 'auto' }} onClick={() => navigate('/')}>Menu</Button>
                 <div className="timer">Time: {timer / 1000}</div>
                 <div className="score">Score: {score}</div>
                 <div className="controls">
                     <IconButton onClick={() => movePlayer('left')}>
-                        <ArrowLeftIcon sx={{ ...iconButtonSx }}/>
+                        <ArrowLeftIcon sx={{ ...iconButtonSx }} />
                     </IconButton>
                     <IconButton onClick={() => movePlayer('right')}>
-                        <ArrowRightIcon sx={{ ...iconButtonSx }}/>
+                        <ArrowRightIcon sx={{ ...iconButtonSx }} />
                     </IconButton>
                 </div>
             </>
@@ -237,7 +239,7 @@ const Game: React.FC = () => {
             {showInput && (
                 <Dialog
                     maxWidth='md'
-                    fullScreen={matchesMediumScreen }
+                    fullScreen={matchesMediumScreen}
                     open={showInput}
                 >
                     <DialogTitle fontSize={36}>Game Over</DialogTitle>
@@ -256,7 +258,7 @@ const Game: React.FC = () => {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button sx={{ ...buttonSx, color: 'white', backgroundColor: '#00A7D3' }} onClick={submitScore}>Submit</Button>
+                        <Button sx={{ ...buttonSx, color: 'white', bgcolor: '#00A7D3' }} onClick={submitScore}>Submit</Button>
                     </DialogActions>
                 </Dialog>
             )}

@@ -1,26 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useLocation } from 'react-router-dom';
 import './LeaderBoard.css';
 import MUIDataTable from "mui-datatables";
+import API from '../../api';
+import { Button, useMediaQuery, useTheme } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { socket } from '../../socket';
 
-interface PlayerScore {
+interface PlayerData {
+    rank: number;
     name: string;
     score: number;
 }
 
 const Leaderboard: React.FC = () => {
-    const [scores, setScores] = useState<PlayerScore[]>([]);
-    const location = useLocation();
-    const { score } = location.state || { score: null };
+    const [data, setData] = useState<PlayerData[]>([]);
+    const navigate = useNavigate();
+    const theme = useTheme();
+    const matchesMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
+    const matchesSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
+    const buttonSx = {
+        fontSize: matchesSmallScreen ? '20px' : matchesMediumScreen ? '25px' : '30px'
+    }
     const columns = [
         {
             name: "rank",
             label: "Rank",
             options: {
                 filter: false,
-                sort: true,
+                sort: false,
             }
         },
         {
@@ -32,8 +40,8 @@ const Leaderboard: React.FC = () => {
             }
         },
         {
-            name: "company",
-            label: "Company",
+            name: "score",
+            label: "Score",
             options: {
                 filter: false,
                 sort: false,
@@ -41,57 +49,26 @@ const Leaderboard: React.FC = () => {
         },
     ];
 
-    const data = [
-        { name: "Joe James", company: "Test Corp" },
-        { name: "John Walsh", company: "Test Corp" },
-        { name: "Bob Herm", company: "Test Corp" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-        { name: "James Houston", company: "Test Co" },
-    ];
-
     useEffect(() => {
         const fetchScores = async () => {
             try {
-                const response = await axios.get('URL_TO_YOUR_BACKEND/leaderboard');
-                setScores(response.data);
-            } catch (error) {
-                console.error('Error fetching leaderboard scores', error);
-            }
-        };
+                const response = await API.LeaderBoard.get_top()
+                    setData(response.data);
+                } catch (error) {
+                    console.error('Error fetching leaderboard scores', error);
+                }
+            };
 
-        fetchScores();
-    }, []);
+            fetchScores();
+        }, []);
+
+    socket.on('newPlayer', (data: PlayerData[]) => {
+        setData(data)
+    })
 
     return (
         <div className='leaderboard'>
+            <Button sx={{ ...buttonSx, bgcolor: '#00A7D3', color: 'white', marginRight: 'auto', marginBottom: 'auto' }} onClick={() => navigate('/')}>Menu</Button>
             <h1 className="leaderboard-title">
                 Leader Board
             </h1>
