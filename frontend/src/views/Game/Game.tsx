@@ -15,7 +15,7 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 const GameDuration = 60000;
-const PlayerMovementAmount = 20;
+const PlayerMovementAmount = 50;
 const PlayerWidth = 50;
 const PlayerHeight = 50; // Assuming a height for the player for collision detection
 const ItemWidth = 30; // Assuming a width for the items

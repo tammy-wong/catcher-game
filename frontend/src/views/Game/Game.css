@@ -1,3 +1,6 @@
+body {
+    overflow: hidden;
+}
 .game-container {
     background-image: url('../../assets/images/background/bg1.png');
     background-size: cover;
@@ -37,8 +40,8 @@
 .player {
     position: absolute;
     bottom: 10px;
-    width: 50px;
-    height: 60px;
+    width: 100px;
+    height: 110px;
     background-image: url('../../assets/images/boat.png');
     background-size: contain;
     background-repeat: no-repeat;
@@ -60,7 +63,7 @@
 
 .controls {
     position: absolute;
-    bottom: 0px;
+    bottom: 50px;
 }
 
 .p {
@@ -77,8 +80,8 @@
 
 .item {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 75px;
+    height: 75px;
     background-size: contain;
     background-repeat: no-repeat;
     transition: top 0.05s linear;
@@ -120,8 +123,17 @@
     }
 
     .player {
-        width: 35px;
-        height: 42px;
+        width: 70px;
+        height: 80px;
+    }
+
+    .item {
+        position: absolute;
+        width: 45px;
+        height: 45px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        transition: top 0.05s linear;
     }
 
     .timer,
@@ -142,8 +154,17 @@
     }
 
     .player {
+        width: 50px;
+        height: 60px;
+    }
+
+    .item {
+        position: absolute;
         width: 25px;
-        height: 30px;
+        height: 25px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        transition: top 0.05s linear;
     }
 
     .timer,

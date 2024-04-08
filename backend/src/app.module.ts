@@ -15,7 +15,7 @@ import { SocketService } from './socket/socket.service';
 import { SocketModule } from './socket/socket.module';
 
 // Define multiple env file, FIFO
-const ENV_FILE_PATH: string[] = ['.env.dev.local', '.env.local', '.env']
+const ENV_FILE_PATH: string[] = ['.env']
 // Config module, reading .env file
 const CONFIG_MODEL = ConfigModule.forRoot({
   envFilePath: ENV_FILE_PATH,
