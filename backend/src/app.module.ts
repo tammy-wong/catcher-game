@@ -10,6 +10,9 @@ import { RouteInterceptor } from './interceptors/route.interceptor';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { CatcherGameModule } from './catchergame/catchergame.module';
+import { AppGateway } from './app.gateway';
+import { SocketService } from './socket/socket.service';
+import { SocketModule } from './socket/socket.module';
 
 // Define multiple env file, FIFO
 const ENV_FILE_PATH: string[] = ['.env.dev.local', '.env.local', '.env']
@@ -37,9 +40,9 @@ const HTTP_EXCEPTION_FILTER = {
 
 // Module settings
 @Module({
-  imports: [CONFIG_MODEL, TYPE_ORM_MODULE, CatcherGameModule],
+  imports: [CONFIG_MODEL, TYPE_ORM_MODULE, CatcherGameModule, SocketModule],
   controllers: [AppController],
-  providers: [AppService, ROUTE_INTERCEPTOR, HTTP_EXCEPTION_FILTER],
+  providers: [AppService, ROUTE_INTERCEPTOR, HTTP_EXCEPTION_FILTER, AppGateway, SocketService],
 })
 
 export class AppModule implements NestModule {
