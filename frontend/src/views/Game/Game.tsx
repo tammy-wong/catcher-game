@@ -138,7 +138,21 @@ const Game: React.FC = () => {
     };
 
     const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+    const matchesMediumScreen  = useMediaQuery(theme.breakpoints.down('md'));
+    const matchesSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+    const dialogButtonSx = {
+        fontSize: matchesSmallScreen ? '75px' : matchesMediumScreen ? '110px' : '150px'
+    }
+
+    const iconButtonSx = {
+        fontSize: matchesSmallScreen ? '110px' : matchesMediumScreen ? '150px' : '200px',
+        color: 'black'
+    }
+
+    const buttonSx = {
+        fontSize: matchesSmallScreen ? '20px' : matchesMediumScreen ? '25px' : '30px'
+    }
 
     useEffect(() => {
         if (hasStarted) {
@@ -161,7 +175,7 @@ const Game: React.FC = () => {
             <Dialog
                 maxWidth='md'
                 fullWidth={true}
-                fullScreen={fullScreen}
+                fullScreen={matchesMediumScreen }
                 open={openDialog}
             >
                 <DialogTitle fontSize={36}>How to Play</DialogTitle>
@@ -169,9 +183,9 @@ const Game: React.FC = () => {
                     <DialogContentText>
                         <p className='p'>1. Control the boat to move left or right
                             <div className='guideline-image-container'>
-                                <ArrowLeftIcon sx={{ fontSize: '150px' }} />
+                                <ArrowLeftIcon sx={{ ...dialogButtonSx }} />
                                 <img className='guideline-boat' src={image_boat} alt='Boat' />
-                                <ArrowRightIcon sx={{ fontSize: '150px' }} />
+                                <ArrowRightIcon sx={{ ...dialogButtonSx }} />
                             </div>
                         </p>
                         <p className='p'>2. Catch below items
@@ -198,18 +212,18 @@ const Game: React.FC = () => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button sx={{ fontSize: '30px', color: 'white', backgroundColor: '#FE366F' }} onClick={startGame}>Start Game</Button>
+                    <Button sx={{ ...buttonSx, bgcolor: '#FE366F', color: 'white'}} onClick={startGame}>Start Game</Button>
                 </DialogActions>
             </Dialog>
             <>
-                <div className="timer">Time: {timer / 1000}s</div>
+                <div className="timer">Time: {timer / 1000}</div>
                 <div className="score">Score: {score}</div>
                 <div className="controls">
-                    <IconButton>
-                        <ArrowLeftIcon sx={{ fontSize: '200px', color: 'black' }} onClick={() => movePlayer('left')} />
+                    <IconButton onClick={() => movePlayer('left')}>
+                        <ArrowLeftIcon sx={{ ...iconButtonSx }}/>
                     </IconButton>
-                    <IconButton>
-                        <ArrowRightIcon sx={{ fontSize: '200px', color: 'black' }} onClick={() => movePlayer('right')} />
+                    <IconButton onClick={() => movePlayer('right')}>
+                        <ArrowRightIcon sx={{ ...iconButtonSx }}/>
                     </IconButton>
                 </div>
             </>
@@ -223,10 +237,10 @@ const Game: React.FC = () => {
             {showInput && (
                 <Dialog
                     maxWidth='md'
-                    fullScreen={fullScreen}
+                    fullScreen={matchesMediumScreen }
                     open={showInput}
                 >
-                    <DialogTitle fontSize={24}>Game Over</DialogTitle>
+                    <DialogTitle fontSize={36}>Game Over</DialogTitle>
                     <DialogContent>
                         <DialogContentText sx={{ fontSize: 'larger' }}>Your score: {score}</DialogContentText>
                         <TextField
@@ -242,7 +256,7 @@ const Game: React.FC = () => {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button sx={{ fontSize: '20px', color: 'white', backgroundColor: '#00A7D3' }} onClick={submitScore}>Submit</Button>
+                        <Button sx={{ ...buttonSx, color: 'white', backgroundColor: '#00A7D3' }} onClick={submitScore}>Submit</Button>
                     </DialogActions>
                 </Dialog>
             )}

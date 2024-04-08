@@ -16,18 +16,26 @@ const Leaderboard: React.FC = () => {
 
     const columns = [
         {
+            name: "rank",
+            label: "Rank",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },
+        {
             name: "name",
             label: "Name",
             options: {
-                filter: true,
-                sort: true,
+                filter: false,
+                sort: false,
             }
         },
         {
             name: "company",
             label: "Company",
             options: {
-                filter: true,
+                filter: false,
                 sort: false,
             }
         },
@@ -83,18 +91,12 @@ const Leaderboard: React.FC = () => {
     }, []);
 
     return (
-        // <div>
-        //     <h1>Leaderboard</h1>
-        //     {score !== null && <p>Your score: {score}</p>}
-        //     <ol>
-        //         {scores.map((player, index) => (
-        //             <li key={index}>{player.name} - {player.score}</li>
-        //         ))}
-        //     </ol>
-        // </div>
         <div className='leaderboard'>
+            <h1 className="leaderboard-title">
+                Leader Board
+            </h1>
             <MUIDataTable
-                title={"LeaderBoard"}
+                title={"Top 100 Player"}
                 data={data}
                 columns={columns}
                 options={{

@@ -13,7 +13,7 @@ const StartMenu: React.FC = () => {
         fontSize: matchesSmallScreen ? '1.2rem' : matchesMediumScreen ? '1.5rem' : '2rem',
         padding: matchesSmallScreen ? '12px 24px' : matchesMediumScreen ? '14px 28px' : '16px 32px',
         margin: '10px 0',
-        borderRadius: '20px', // More rounded buttons
+        borderRadius: '20px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
         transition: 'transform 0.2s, box-shadow 0.2s',
         '&:hover': {
